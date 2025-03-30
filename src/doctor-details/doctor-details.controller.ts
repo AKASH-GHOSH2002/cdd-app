@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete ,Put, UseInterceptors,Req,  MaxFileSizeValidator, FileTypeValidator,  UploadedFile,ParseFilePipe, UnauthorizedException} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete ,Put, UseInterceptors,Req,  MaxFileSizeValidator, FileTypeValidator,  UploadedFile,ParseFilePipe, UnauthorizedException, Query} from '@nestjs/common';
 import { Multer } from 'multer';
 import { DoctorDetailsService } from './doctor-details.service';
 import { CreateDoctorDetailDto } from './dto/create-doctor-detail.dto';
-import { UpdateDoctorDetailDto } from './dto/update-doctor-detail.dto';
+import { PaginationDto, UpdateDoctorDetailDto } from './dto/update-doctor-detail.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.gurad';
@@ -21,9 +21,25 @@ import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 export class DoctorDetailsController {
   constructor(private readonly doctorDetailsService: DoctorDetailsService) {}
 
+
+
+   @Get()
+  findAll(@Query() dto: PaginationDto) {
+    return this.doctorDetailsService.findAll(dto);
+  }
+
+
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(...Object.values(UserRole))
+  profile(@CurrentUser() user: Account) {
+    return this.doctorDetailsService.getProfile(user.id);
+  }
+
+
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  @Roles(UserRole.DOCTOR, UserRole.ADMIN, )
+  @Roles(UserRole.ADMIN, )
   async getDoctorById(
     @CurrentUser() user: Account,
     @Param('id') doctorId: string
@@ -33,22 +49,20 @@ export class DoctorDetailsController {
   }
 
 
-// current user 
-  @Patch(':id')
-  @UseGuards(AuthGuard('jwt'),RolesGuard)
-  @Roles(UserRole.ADMIN, )
-  async updateSchool(
-    @CurrentUser() user: Account,
-    @Param('id') schoolId: string,
-    @Body() Dto: UpdateDoctorProfileDto
-  ) {
-    return this.doctorDetailsService.updateSchool(user.id, schoolId, Dto, );
+
+  
+  @Patch()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.DOCTOR)
+  update(@CurrentUser() user: Account, @Body() dto: UpdateDoctorProfileDto) {
+    return this.doctorDetailsService.update(user.id, dto);
   }
 
 
+
  @Put('profile')
-   @UseGuards(AuthGuard('jwt'), )
-  // @Roles(UserRole.DOCTOR)
+   @UseGuards(AuthGuard('jwt'),RolesGuard )
+   @Roles(UserRole.DOCTOR)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -63,6 +77,7 @@ export class DoctorDetailsController {
       }),
     }),
   )
+
   async profileImage(
     @CurrentUser() user: Account,
     
