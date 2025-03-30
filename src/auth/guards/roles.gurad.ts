@@ -12,7 +12,7 @@ export class RolesGuard implements CanActivate {
       return true; 
     }
     const request = context.switchToHttp().getRequest();
-
+console.log(request.user);
     if (!request.user) {
       throw new ForbiddenException('User not authenticated');
     }
@@ -25,8 +25,6 @@ export class RolesGuard implements CanActivate {
     
       throw new ForbiddenException('User does not have required permissions');
     }
-
-
     return true;
   }
 }

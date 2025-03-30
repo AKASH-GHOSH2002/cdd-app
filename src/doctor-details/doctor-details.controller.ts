@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete ,Put, UseInterceptors,Req,  MaxFileSizeValidator, FileTypeValidator,  UploadedFile,ParseFilePipe, UnauthorizedException} from '@nestjs/common';
 import { Multer } from 'multer';
-
 import { DoctorDetailsService } from './doctor-details.service';
 import { CreateDoctorDetailDto } from './dto/create-doctor-detail.dto';
 import { UpdateDoctorDetailDto } from './dto/update-doctor-detail.dto';
@@ -34,9 +33,10 @@ export class DoctorDetailsController {
   }
 
 
-
+// current user 
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
+  @UseGuards(AuthGuard('jwt'),RolesGuard)
+  @Roles(UserRole.ADMIN, )
   async updateSchool(
     @CurrentUser() user: Account,
     @Param('id') schoolId: string,
@@ -47,8 +47,8 @@ export class DoctorDetailsController {
 
 
  @Put('profile')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.DOCTOR)
+   @UseGuards(AuthGuard('jwt'), )
+  // @Roles(UserRole.DOCTOR)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -65,6 +65,7 @@ export class DoctorDetailsController {
   )
   async profileImage(
     @CurrentUser() user: Account,
+    
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -75,6 +76,7 @@ export class DoctorDetailsController {
     )
     file: Express.Multer.File,
   ) {
+    console.log(user);
     const fileData = await this.doctorDetailsService.findCompany(user.id);
     return this.doctorDetailsService.profileImage(file.path, fileData);
   }

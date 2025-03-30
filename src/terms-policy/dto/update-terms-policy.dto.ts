@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateTermsPolicyDto } from './create-terms-policy.dto';
+import { IsNotEmpty, IsString } from 'class-validator';
+export class UpdateTermsPolicyDto {
+  @IsNotEmpty()
+  @IsString()
+  terms: string;
 
-export class UpdateTermsPolicyDto extends PartialType(CreateTermsPolicyDto) {}
+  @IsNotEmpty()
+  @IsString()
+  privacy_policy: string;
+
+}

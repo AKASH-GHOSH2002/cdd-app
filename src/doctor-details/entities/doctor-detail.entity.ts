@@ -41,5 +41,4 @@ export class DoctorDetail {
 
       @ManyToOne(() => Account, (account) => account.doctorDetail)
       account: Account;
-
 }

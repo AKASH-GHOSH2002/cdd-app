@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { CreateTermsPolicyDto } from './dto/create-terms-policy.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateTermsPolicyDto } from './dto/update-terms-policy.dto';
-
+import { CreateTermsPolicyDto } from './dto/create-terms-policy.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TermsPolicy } from './entities/terms-policy.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class TermsPolicyService {
-  create(createTermsPolicyDto: CreateTermsPolicyDto) {
-    return 'This action adds a new termsPolicy';
+  constructor( 
+    @InjectRepository(TermsPolicy)
+    private  readonly termsPolicyRepository: Repository<TermsPolicy>,
+
+  ){}
+  async createTermsPolicy(dto: UpdateTermsPolicyDto): Promise<TermsPolicy> {
+    const termsPolicy = this.termsPolicyRepository.create(dto);
+    return this.termsPolicyRepository.save(termsPolicy);
   }
 
-  findAll() {
-    return `This action returns all termsPolicy`;
+  
+  async getTermsPolicy(): Promise<TermsPolicy> {
+    const termsPolicy = await this.termsPolicyRepository.findOne({ where: {} });
+    if (!termsPolicy) {
+      throw new NotFoundException('Terms & Policy not found');
+    }
+    return termsPolicy;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} termsPolicy`;
-  }
-
-  update(id: number, updateTermsPolicyDto: UpdateTermsPolicyDto) {
-    return `This action updates a #${id} termsPolicy`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} termsPolicy`;
+  async updateTermsPolicy(dto: UpdateTermsPolicyDto): Promise<TermsPolicy> {
+    let termsPolicy = await this.termsPolicyRepository.findOne({ where: {} });
+    if (!termsPolicy) {
+      termsPolicy = this.termsPolicyRepository.create(dto);
+    } else {
+      termsPolicy.terms = dto.terms;
+      termsPolicy.privacy_policy = dto.privacy_policy;
+    }
+    return this.termsPolicyRepository.save(termsPolicy);
   }
 }
