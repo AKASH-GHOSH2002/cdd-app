@@ -69,13 +69,12 @@ async findAll(dto: PaginationDto) {
   return { result, total };
 }
 
-async getdoctorById(accountId: string, doctorId: string, ) {
+async getdoctorById( doctorId: string, ) {
   const DoctorDetail = await this.DoctorRepo.createQueryBuilder('doctorDetail')
     .where('doctorDetail.id = :id', { id: doctorId })
     .getOne();
   return DoctorDetail;
 }
-
 
 async update(id: string, dto: UpdateDoctorProfileDto) {
       const result = await this.DoctorRepo.findOne({ where: { accountId: id } });
@@ -86,16 +85,6 @@ async update(id: string, dto: UpdateDoctorProfileDto) {
       return this.DoctorRepo.save(obj);
     }
 
-// async updateSchool(accountId: string, doctorId: string, Dto:UpdateDoctorDetailDto, ) {
-//   await this.getdoctorById(accountId, doctorId, );
-//   await this.DoctorRepo.createQueryBuilder()
-//     .update(DoctorDetail)
-//     .set(Dto)
-//     .where('id = :id', { id: doctorId })
-//     .execute();
-//   return this.getdoctorById(accountId, doctorId, );
-// }
-
 
 
    async profileImage(image: string, result: DoctorDetail) {
@@ -105,7 +94,6 @@ async update(id: string, dto: UpdateDoctorProfileDto) {
     });
     return this.DoctorRepo.save(obj);
   }
-
 
 
   async findCompany(id: string) {

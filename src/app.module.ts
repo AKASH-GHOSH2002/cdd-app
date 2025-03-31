@@ -9,6 +9,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LanguagesModule } from './languages/languages.module';
 import { TermsPolicyModule } from './terms-policy/terms-policy.module';
+import { PrivacyPolicyModule } from './privacy-policy/privacy-policy.module';
+import { DataModule } from './privacy/data/data.module';
+import { WhyChoseUsModule } from './why-chose-us/why-chose-us.module';
 
 @Module({
   imports: [
@@ -27,7 +30,7 @@ import { TermsPolicyModule } from './terms-policy/terms-policy.module';
       
     }),
     
-    AccountModule, UserDetailsModule, AuthModule, DoctorDetailsModule, LanguagesModule, TermsPolicyModule],
+    AccountModule, UserDetailsModule, AuthModule, DoctorDetailsModule, LanguagesModule, TermsPolicyModule, PrivacyPolicyModule, DataModule, WhyChoseUsModule],
   controllers: [AppController],
   providers: [AppService],
 })

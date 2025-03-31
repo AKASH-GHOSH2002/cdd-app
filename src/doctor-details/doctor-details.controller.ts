@@ -37,18 +37,14 @@ export class DoctorDetailsController {
   }
 
 
-  @Get()
-  @UseGuards(AuthGuard('jwt'))
-  @Roles(UserRole.ADMIN, )
-  async getDoctorById(
-    @CurrentUser() user: Account,
-    @Param('id') doctorId: string
-    
-  ) {
-    return this.doctorDetailsService.getdoctorById(user.id, doctorId,);
-  }
 
-
+  @Get(':id') 
+@Roles(UserRole.ADMIN)
+async getDoctorById(
+  @Param('id') doctorId: string, 
+) {
+  return this.doctorDetailsService.getdoctorById( doctorId);
+}
 
   
   @Patch()
